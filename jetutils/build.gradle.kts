@@ -1,3 +1,4 @@
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -45,4 +46,18 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.compose)
+}
+
+afterEvaluate {
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                groupId = "com.easyapps.jetutils"
+                artifactId = "jet-utils"
+                version = "0.0.1"
+
+                from(components["release"])
+            }
+        }
+    }
 }
