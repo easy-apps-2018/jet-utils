@@ -1,4 +1,10 @@
 package com.easyapps.jetutils
 
-class Utils {
+import android.os.*
+
+val currentTime: Long
+    get() = System.currentTimeMillis()
+
+fun onHandler(delay: Long, onPostDelayed: () -> Unit) {
+    Handler(Looper.getMainLooper()).postDelayed({ onPostDelayed.invoke() }, delay)
 }
