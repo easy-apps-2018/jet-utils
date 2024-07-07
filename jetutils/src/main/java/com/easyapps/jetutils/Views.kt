@@ -156,3 +156,20 @@ fun Divider(
         color = onAnimateColor(color = temp ?: MaterialTheme.colorScheme.surface)
     )
 }
+
+@Composable
+fun BackButton(
+    modifier: Modifier = Modifier,
+    visible: Boolean = true,
+    @DrawableRes icon: Int = R.drawable.ic_back,
+    @StringRes contentDescription: Int = R.string.navigate_back,
+    onClick: () -> Unit
+) {
+    IconButton(
+        icon = icon,
+        visible = visible,
+        onClick = onClick,
+        modifier = modifier,
+        contentDescription = contentDescription
+    )
+}

@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.animation.graphics.android)
+    implementation(libs.androidx.navigation.runtime.ktx)
 }
 
 afterEvaluate {
