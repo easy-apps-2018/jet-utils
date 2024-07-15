@@ -10,14 +10,6 @@ fun ComponentActivity.enableSplashScreen() {
     this.installSplashScreen().setKeepOnScreenCondition { isSplash }
 }
 
-fun NavController.onNavigate(route: String) {
-    this.navigate(route) {
-        popUpTo(this@onNavigate.graph.id) {
-            this.inclusive = true
-        }
-    }
-}
-
 fun NavHostController.onDestination(onChanged: (route: String) -> Unit) {
     this.addOnDestinationChangedListener { _, destination, _ ->
         onChanged.invoke(destination.route.toString())
