@@ -1,6 +1,14 @@
 package com.easyapps.jetutils
 
+import androidx.activity.*
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.*
+
+fun ComponentActivity.enableSplashScreen() {
+    var isSplash = true
+    onHandler(800) { isSplash = false }
+    this.installSplashScreen().setKeepOnScreenCondition { isSplash }
+}
 
 fun NavController.onNavigate(route: String) {
     this.navigate(route) {

@@ -1,9 +1,11 @@
 
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.jetbrains.kotlin.android)
-    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.maven.publish)
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
 }
 
 android {
@@ -45,11 +47,24 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.material3)
     implementation(libs.androidx.animation.android)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.animation.graphics.android)
-    implementation(libs.androidx.navigation.runtime.ktx)
+
+    // Material 3
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material3.window.size)
+
+    // UI
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+
+    // Room
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.room.ktx)
+    annotationProcessor(libs.androidx.room.compiler)
 }
 
 afterEvaluate {

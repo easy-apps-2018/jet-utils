@@ -58,6 +58,21 @@ fun SlideOutVisible(
 }
 
 @Composable
+fun SlideDownVisible(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    content: @Composable AnimatedVisibilityScope.() -> Unit
+) {
+    AnimatedVisibility(
+        content = content,
+        visible = visible,
+        modifier = modifier,
+        exit = slideOutVertically(),
+        enter = slideInVertically()
+    )
+}
+
+@Composable
 fun SlideInVisible(
     visible: Boolean,
     modifier: Modifier = Modifier,
@@ -92,6 +107,11 @@ fun ScaleVisible(
 @Composable
 fun onPlural(@PluralsRes res: Int?, count: Int): String {
     return pluralStringResource(res ?: R.string.empty, count, count)
+}
+
+@Composable
+fun onString(@StringRes id: Int): String {
+    return stringResource(id = id)
 }
 
 @Composable
