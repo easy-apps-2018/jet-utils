@@ -184,7 +184,6 @@ fun BackButton(
 fun ScaffoldNavigationDrawer(
     modifier: Modifier,
     isRailVisible: Boolean,
-    backgroundColor: Color,
     headerSpace: Dp = 70.dp,
     drawerState: DrawerState,
     gesturesEnabled: Boolean = true,
@@ -194,6 +193,7 @@ fun ScaffoldNavigationDrawer(
     floatingActionButton: @Composable () -> Unit = {},
     drawerContent: @Composable ColumnScope.() -> Unit,
     navigationRailContent: @Composable ColumnScope.() -> Unit,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
     navigationRailHeader: @Composable (ColumnScope.() -> Unit)? = null
 ) {
     ModalNavigationDrawer(
@@ -254,7 +254,7 @@ fun NavRailItem(
     navItem: NavItem,
     selected: Boolean,
     iconSize: Dp = 26.dp,
-    indicatorColor: Color,
+    indicatorColor: Color = MaterialTheme.colorScheme.secondary,
     onClick: suspend CoroutineScope.() -> Unit
 ) {
     if (navItem.visible) {
@@ -284,9 +284,9 @@ fun NavDrawerItem(
     navItem: NavItem,
     selected: Boolean,
     iconSize: Dp = 26.dp,
-    selectedIconColor: Color,
     fontSize: TextUnit = 16.sp,
-    unselectedContainerColor: Color,
+    selectedIconColor: Color = MaterialTheme.colorScheme.secondary,
+    unselectedContainerColor: Color = MaterialTheme.colorScheme.background,
     onClick: suspend CoroutineScope.() -> Unit
 ) {
     if (navItem.visible) {
