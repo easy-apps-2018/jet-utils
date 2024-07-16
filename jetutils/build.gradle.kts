@@ -52,6 +52,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.animation.graphics.android)
+    implementation(libs.androidx.compose.navigation)
 
     // Material 3
     implementation(libs.androidx.material3)
@@ -73,7 +74,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.easyapps.jetutils"
                 artifactId = "jet-utils"
-                version = "0.0.2"
+                version = "0.0.6"
 
                 from(components["release"])
             }
