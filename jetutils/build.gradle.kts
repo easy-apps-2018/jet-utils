@@ -1,6 +1,5 @@
 
 plugins {
-    alias(libs.plugins.devtools.ksp)
     alias(libs.plugins.maven.publish)
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
@@ -52,7 +51,7 @@ dependencies {
     implementation(libs.androidx.animation.graphics.android)
 
     //Navigation
-    implementation(libs.androidx.compose.navigation)
+    implementation(libs.androidx.navigation.compose)
    // implementation(libs.androidx.navigation.runtime.ktx)
 
     // Material 3
@@ -62,12 +61,6 @@ dependencies {
     // UI
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.navigation.compose)
-
-    // Room
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.androidx.room.ktx)
-    annotationProcessor(libs.androidx.room.compiler)
 }
 
 afterEvaluate {
@@ -76,7 +69,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.easyapps.jetutils"
                 artifactId = "jet-utils"
-                version = "0.1.6"
+                version = "0.1.7"
 
                 from(components["release"])
             }

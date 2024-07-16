@@ -340,6 +340,7 @@ fun RadioButton(
     text: String,
     selected: Boolean,
     iconSize: Dp = 26.dp,
+    fontSize: TextUnit = 16.sp,
     @DrawableRes animatedIcon: Int = R.drawable.ic_radio_button,
     onClick: () -> Unit
 ) {
@@ -360,12 +361,13 @@ fun RadioButton(
                     )
                     Text(
                         text = text,
-                        modifier = Modifier.weight(1f)
+                        fontSize = fontSize,
+                        modifier = Modifier.weight(weight = 1f)
                     )
                 },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 8.dp)
             )
         },
         onClick = onClick,
