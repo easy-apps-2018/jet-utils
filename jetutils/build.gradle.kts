@@ -14,8 +14,6 @@ android {
 
     defaultConfig {
         minSdk = 26
-
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
     }
 
@@ -49,10 +47,12 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.core.splashscreen)
-    implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.animation.graphics.android)
+
+    //Navigation
     implementation(libs.androidx.compose.navigation)
+   // implementation(libs.androidx.navigation.runtime.ktx)
 
     // Material 3
     implementation(libs.androidx.material3)
@@ -61,6 +61,7 @@ dependencies {
     // UI
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.navigation.compose)
 
     // Room
     ksp(libs.androidx.room.compiler)
@@ -74,7 +75,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.easyapps.jetutils"
                 artifactId = "jet-utils"
-                version = "0.0.7"
+                version = "0.0.9"
 
                 from(components["release"])
             }

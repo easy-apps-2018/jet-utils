@@ -10,7 +10,10 @@ import androidx.compose.runtime.saveable.*
 import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
+import androidx.navigation.*
+import androidx.navigation.compose.*
 import com.easyapps.jetutils.R
 import com.easyapps.jetutils.utils.*
 
@@ -25,6 +28,31 @@ fun ComponentActivity.CalculateWindowSizeClass(
     onCompact(windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact)
     onMedium(windowSize.widthSizeClass == WindowWidthSizeClass.Medium || windowSize.heightSizeClass == WindowHeightSizeClass.Medium)
     onExpanded(windowSize.widthSizeClass == WindowWidthSizeClass.Expanded || windowSize.heightSizeClass == WindowHeightSizeClass.Expanded)
+}
+
+
+@Composable
+fun rememberNavController(onChanged: (value: String) -> Unit): NavHostController {
+    val controller = rememberNavController()
+    controller.addOnDestinationChangedListener { _, destination, _ ->
+        onChanged.invoke(destination.route.toString())
+    }
+    return controller
+}
+
+@Composable
+fun NavGraph(
+    modifier: Modifier = Modifier,
+    startRoute: String = HOME,
+    controller: NavHostController,
+    graphBuilder: NavGraphBuilder.() -> Unit
+) {
+    NavHost(
+        modifier = modifier,
+        builder = graphBuilder,
+        navController = controller,
+        startDestination = startRoute
+    )
 }
 
 @Composable
