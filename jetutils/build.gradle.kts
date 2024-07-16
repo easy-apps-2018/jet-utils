@@ -47,6 +47,7 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.animation.android)
     implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.animation.graphics.android)
 
@@ -75,7 +76,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.easyapps.jetutils"
                 artifactId = "jet-utils"
-                version = "0.1.5"
+                version = "0.1.6"
 
                 from(components["release"])
             }

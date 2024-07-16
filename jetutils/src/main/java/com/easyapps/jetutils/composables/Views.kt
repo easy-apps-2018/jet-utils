@@ -1,5 +1,6 @@
 package com.easyapps.jetutils.composables
 
+import androidx.activity.compose.*
 import androidx.annotation.*
 import androidx.compose.animation.*
 import androidx.compose.animation.graphics.*
@@ -28,39 +29,53 @@ fun Icon(
     @DrawableRes icon: Int,
     visible: Boolean = true,
     checked: Boolean? = null,
-    @StringRes contentDescription: Int,
+    @StringRes contentDescription: Int? = null,
     tint: Color = LocalContentColor.current
 ) {
     ScaleVisible(visible = visible, modifier = modifier) {
-        TooltipBox(
-            tooltip = {
-                PlainTooltip(
-                    contentColor = Color.White,
-                    containerColor = MaterialTheme.colorScheme.secondary
-                ) {
-                    Text(
-                        fontWeight = FontWeight.Light,
-                        text = stringResource(id = contentDescription)
-                    )
-                }
-            },
-            content = {
-                Icon(
-                    tint = tint,
-                    painter = if (checked != null)
-                        rememberAnimatedVectorPainter(
-                            atEnd = checked,
-                            animatedImageVector = AnimatedImageVector.animatedVectorResource(id = icon)
+        if (contentDescription != null)
+            TooltipBox(
+                tooltip = {
+                    PlainTooltip(
+                        contentColor = Color.White,
+                        containerColor = MaterialTheme.colorScheme.secondary
+                    ) {
+                        Text(
+                            fontWeight = FontWeight.Light,
+                            text = stringResource(id = contentDescription)
                         )
-                    else
-                        painterResource(id = icon),
-                    modifier = Modifier.size(size = iconSize),
-                    contentDescription = stringResource(id = contentDescription)
-                )
-            },
-            state = rememberTooltipState(),
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider()
-        )
+                    }
+                },
+                content = {
+                    Icon(
+                        tint = tint,
+                        painter = if (checked != null)
+                            rememberAnimatedVectorPainter(
+                                atEnd = checked,
+                                animatedImageVector = AnimatedImageVector.animatedVectorResource(id = icon)
+                            )
+                        else
+                            painterResource(id = icon),
+                        modifier = Modifier.size(size = iconSize),
+                        contentDescription = onString(id = contentDescription)
+                    )
+                },
+                state = rememberTooltipState(),
+                positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider()
+            )
+        else
+            Icon(
+                tint = tint,
+                painter = if (checked != null)
+                    rememberAnimatedVectorPainter(
+                        atEnd = checked,
+                        animatedImageVector = AnimatedImageVector.animatedVectorResource(id = icon)
+                    )
+                else
+                    painterResource(id = icon),
+                modifier = Modifier.size(size = iconSize),
+                contentDescription = null
+            )
     }
 }
 
@@ -316,5 +331,93 @@ fun NavDrawerItem(
                 selectedContainerColor = selectedIconColor.copy(alpha = 0.1f)
             )
         )
+    }
+}
+
+@Composable
+fun RadioButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    selected: Boolean,
+    iconSize: Dp = 26.dp,
+    @DrawableRes animatedIcon: Int = R.drawable.ic_radio_button,
+    onClick: () -> Unit
+) {
+    val color = if (selected)
+        MaterialTheme.colorScheme.secondary
+    else
+        LocalContentColor.current
+
+    Card(
+        content =  {
+            Row(
+                content = {
+                    Icon(
+                        checked = selected,
+                        icon = animatedIcon,
+                        iconSize = iconSize,
+                        tint = onAnimateColor(color = color)
+                    )
+                    Text(
+                        text = text,
+                        modifier = Modifier.weight(1f)
+                    )
+                },
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                modifier = Modifier.padding(horizontal = 14.dp, vertical = 6.dp)
+            )
+        },
+        onClick = onClick,
+        enabled = !selected,
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            disabledContentColor = LocalContentColor.current,
+            containerColor = MaterialTheme.colorScheme.background,
+            disabledContainerColor = MaterialTheme.colorScheme.background
+        )
+    )
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun BottomModalSheet(
+    visible: Boolean,
+    onDismiss: () -> Unit,
+    dragHandleColor: Color = MaterialTheme.colorScheme.secondary,
+    contentScope: @Composable ColumnScope.() -> Unit
+) {
+    val scope = rememberCoroutineScope()
+    val bottom = rememberModalBottomSheetState()
+
+    BackHandler(enabled = visible) {
+        scope.launch { bottom.hide() }
+    }
+
+    if (visible)
+        ModalBottomSheet(
+            content = {
+                Column(
+                    content = contentScope,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                )
+
+            },
+            dragHandle = {
+                BottomSheetDefaults.DragHandle(
+                    color = onAnimateColor(color = dragHandleColor)
+                )
+            },
+            sheetState = bottom,
+            onDismissRequest = onDismiss,
+            modifier = Modifier.navigationBarsPadding(),
+            containerColor = MaterialTheme.colorScheme.background
+        )
+
+    LaunchedEffect(key1 = visible) {
+        if (visible)
+            bottom.partialExpand()
+        else
+            bottom.hide()
     }
 }

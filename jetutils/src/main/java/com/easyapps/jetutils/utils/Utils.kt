@@ -10,7 +10,3 @@ val currentTime: Long
 fun onHandler(delay: Long, onPostDelayed: () -> Unit) {
     Handler(Looper.getMainLooper()).postDelayed({ onPostDelayed.invoke() }, delay)
 }
-
-fun Context.onExit() {
-    (this as ComponentActivity).moveTaskToBack(true)
-}

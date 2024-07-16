@@ -3,7 +3,6 @@ package com.easyapps.jetutils.utils
 import android.content.*
 import android.content.pm.*
 import android.net.*
-import android.os.*
 import android.widget.*
 import androidx.activity.*
 import androidx.annotation.*
@@ -62,6 +61,14 @@ fun Context.onPlay() {
             )
         )
     }
+}
+
+fun Context.onAssets(name: String): String {
+    return this.assets.open(name).bufferedReader().use { it.readText() }
+}
+
+fun Context.onExit() {
+    (this as ComponentActivity).moveTaskToBack(true)
 }
 
 fun NavController.onNavigate(route: String) {
