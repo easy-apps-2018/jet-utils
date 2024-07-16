@@ -181,7 +181,7 @@ fun BackButton(
 }
 
 @Composable
-fun NavigationDrawer(
+fun ScaffoldNavigationDrawer(
     modifier: Modifier,
     isRailVisible: Boolean,
     backgroundColor: Color,
