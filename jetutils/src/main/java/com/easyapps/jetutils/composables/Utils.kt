@@ -1,21 +1,30 @@
-package com.easyapps.jetutils
+package com.easyapps.jetutils.composables
 
-import android.os.*
+import androidx.activity.*
 import androidx.annotation.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.*
 import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.res.*
+import com.easyapps.jetutils.R
+import com.easyapps.jetutils.utils.*
 
-val currentTime: Long
-    get() = System.currentTimeMillis()
-
-fun onHandler(delay: Long, onPostDelayed: () -> Unit) {
-    Handler(Looper.getMainLooper()).postDelayed({ onPostDelayed.invoke() }, delay)
+@Composable
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+fun ComponentActivity.CalculateWindowSizeClass(
+    onMedium: (Boolean) -> Unit = {},
+    onCompact: (Boolean) -> Unit = {},
+    onExpanded: (Boolean) -> Unit = {}
+) {
+    val windowSize = calculateWindowSizeClass(this)
+    onCompact(windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact)
+    onMedium(windowSize.widthSizeClass == WindowWidthSizeClass.Medium || windowSize.heightSizeClass == WindowHeightSizeClass.Medium)
+    onExpanded(windowSize.widthSizeClass == WindowWidthSizeClass.Expanded || windowSize.heightSizeClass == WindowHeightSizeClass.Expanded)
 }
 
 @Composable
@@ -26,6 +35,34 @@ fun onAnimateColor(color: Color, duration: Int = 300): Color {
         animationSpec = tween(duration)
     )
     return state.copy()
+}
+
+@Composable
+fun ScaleVisible(
+    visible: Boolean,
+    modifier: Modifier = Modifier,
+    duration: Int = 300,
+    content: @Composable AnimatedVisibilityScope.() -> Unit
+) {
+    AnimatedVisibility(
+        content = content,
+        visible = visible,
+        modifier = modifier,
+        enter = scaleIn(tween(duration)),
+        exit = scaleOut(tween(duration))
+    )
+}
+
+@Composable
+fun <T : Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
+    return rememberSaveable(
+        saver = listSaver(
+            save = { stateList -> stateList.toList() },
+            restore = { list -> list.toMutableStateList() }
+        )
+    ) {
+        elements.toList().toMutableStateList()
+    }
 }
 
 @Composable
@@ -89,24 +126,8 @@ fun SlideInVisible(
 
 
 @Composable
-fun ScaleVisible(
-    visible: Boolean,
-    modifier: Modifier = Modifier,
-    duration: Int = 300,
-    content: @Composable AnimatedVisibilityScope.() -> Unit
-) {
-    AnimatedVisibility(
-        content = content,
-        visible = visible,
-        modifier = modifier,
-        enter = scaleIn(tween(duration)),
-        exit = scaleOut(tween(duration))
-    )
-}
-
-@Composable
-fun onPlural(@PluralsRes res: Int?, count: Int): String {
-    return pluralStringResource(res ?: R.string.empty, count, count)
+fun onPlural(@PluralsRes res: Int?, count: Int, vararg formatArgs: Any): String {
+    return pluralStringResource(id = res ?: R.string.empty, count = count, formatArgs = formatArgs)
 }
 
 @Composable
@@ -115,13 +136,6 @@ fun onString(@StringRes id: Int): String {
 }
 
 @Composable
-fun <T: Any> rememberMutableStateListOf(vararg elements: T): SnapshotStateList<T> {
-    return rememberSaveable(saver = snapshotStateListSaver()) {
-        elements.toList().toMutableStateList()
-    }
+fun onString(@StringRes id: Int?, vararg formatArgs: Any): String {
+    return stringResource(id = id ?: R.string.empty, formatArgs = formatArgs)
 }
-
-private fun <T : Any> snapshotStateListSaver() = listSaver<SnapshotStateList<T>, T>(
-    save = { stateList -> stateList.toList() },
-    restore = { it.toMutableStateList() },
-)

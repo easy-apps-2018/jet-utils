@@ -1,7 +1,10 @@
-package com.easyapps.jetutils
+package com.easyapps.jetutils.utils
 
+import android.content.pm.*
+import androidx.activity.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.*
 
 fun NavController.onNavigate(route: String) {
@@ -9,6 +12,25 @@ fun NavController.onNavigate(route: String) {
         popUpTo(this@onNavigate.graph.id) {
             this.inclusive = true
         }
+    }
+}
+
+fun ComponentActivity.onScreenLock(isLock: Boolean) {
+    this.requestedOrientation = if (isLock)
+        ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    else
+        ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+}
+
+fun ComponentActivity.enableSplashScreen(delay: Long = 800) {
+    var isSplash = true
+    onHandler(delay) { isSplash = false }
+    this.installSplashScreen().setKeepOnScreenCondition { isSplash }
+}
+
+fun NavHostController.onDestination(onChanged: (route: String) -> Unit) {
+    this.addOnDestinationChangedListener { _, destination, _ ->
+        onChanged.invoke(destination.route.toString())
     }
 }
 

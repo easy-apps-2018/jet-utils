@@ -1,4 +1,4 @@
-package com.easyapps.jetutils
+package com.easyapps.jetutils.utils
 
 
 const val EMPTY = ""
