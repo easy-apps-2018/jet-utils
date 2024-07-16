@@ -64,18 +64,6 @@ fun Context.onPlay() {
     }
 }
 
-@Suppress("DEPRECATION")
-fun Context.onVibrate(vibrate: Boolean) {
-
-    val vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-        (this.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as VibratorManager).defaultVibrator
-    else
-        this.getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-
-    if (vibrate)
-        vibrator.vibrate(VibrationEffect.createOneShot(30, VibrationEffect.DEFAULT_AMPLITUDE))
-}
-
 fun NavController.onNavigate(route: String) {
     this.navigate(route) {
         popUpTo(this@onNavigate.graph.id) {
