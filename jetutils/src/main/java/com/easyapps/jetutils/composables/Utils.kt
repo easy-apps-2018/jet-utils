@@ -18,8 +18,8 @@ import com.easyapps.jetutils.utils.*
 @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
 fun ComponentActivity.CalculateWindowSizeClass(
     onMedium: (Boolean) -> Unit = {},
-    onCompact: (Boolean) -> Unit = {},
-    onExpanded: (Boolean) -> Unit = {}
+    onExpanded: (Boolean) -> Unit = {},
+    onCompact: (Boolean) -> Unit = {}
 ) {
     val windowSize = calculateWindowSizeClass(this)
     onCompact(windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact)

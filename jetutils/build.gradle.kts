@@ -74,7 +74,7 @@ afterEvaluate {
             create<MavenPublication>("maven") {
                 groupId = "com.easyapps.jetutils"
                 artifactId = "jet-utils"
-                version = "0.0.6"
+                version = "0.0.7"
 
                 from(components["release"])
             }
