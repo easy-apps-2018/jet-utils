@@ -8,14 +8,18 @@ import androidx.compose.animation.graphics.res.*
 import androidx.compose.animation.graphics.vector.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
+import androidx.compose.ui.focus.*
 import androidx.compose.ui.graphics.*
+import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
 import androidx.compose.ui.text.font.*
 import androidx.compose.ui.text.style.*
 import androidx.compose.ui.unit.*
+import androidx.compose.ui.window.*
 import com.easyapps.jetutils.*
 import com.easyapps.jetutils.R
 import com.easyapps.jetutils.utils.*
@@ -422,4 +426,55 @@ fun BottomModalSheet(
         else
             bottom.hide()
     }
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun AlertDialog(
+    visible: Boolean,
+    duration: Int = 100,
+    onDismiss: () -> Unit,
+    horizontal: Dp = 6.dp,
+    @StringRes title: Int?,
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceVariant,
+    content: @Composable ColumnScope.(focusManager: FocusManager) -> Unit
+) {
+    ScaleVisible(
+        content = {
+            BasicAlertDialog(
+                content = {
+                    val focusManager = LocalFocusManager.current
+
+                    Surface(
+                        content =  {
+                            Column(
+                                content =  {
+                                    Text(
+                                        text = stringResource(id = title ?: R.string.empty),
+                                        fontSize = 20.sp,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = FontWeight.Normal,
+                                        modifier = Modifier
+                                            .padding(top = 14.dp)
+                                            .fillMaxWidth()
+                                    )
+                                    content.invoke(this, focusManager)
+                                },
+                                modifier = Modifier.animateContentSize(),
+                                horizontalAlignment = Alignment.CenterHorizontally
+                            )
+                        },
+                        color = backgroundColor,
+                        shape = RoundedCornerShape(size = 12.dp),
+                        modifier = Modifier.wrapContentHeight().padding(horizontal = 26.dp)
+                    )
+                },
+                onDismissRequest = onDismiss,
+                properties = DialogProperties(usePlatformDefaultWidth = false),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = horizontal)
+            )
+        },
+        visible = visible,
+        duration = duration
+    )
 }
