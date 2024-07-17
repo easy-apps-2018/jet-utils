@@ -478,3 +478,31 @@ fun AlertDialog(
         duration = duration
     )
 }
+
+@Composable
+fun DialogButton(
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
+    @StringRes title: Int,
+    textUnit: TextUnit = 16.sp,
+    contentColor: Color = Color.White,
+    containerColor: Color = MaterialTheme.colorScheme.secondary
+) {
+    Button(
+        content = {
+            Text(
+                maxLines = 1,
+                fontSize = textUnit,
+                text = onString(id = title),
+                textAlign = TextAlign.Center,
+                fontWeight = FontWeight.Light
+            )
+        },
+        onClick = onClick,
+        modifier = modifier,
+        colors = ButtonDefaults.buttonColors(
+            contentColor = contentColor,
+            containerColor = containerColor
+        )
+    )
+}
