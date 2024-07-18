@@ -515,6 +515,7 @@ fun HorizontalPager(
     state: PagerState,
     modifier: Modifier,
     maxOffset: Dp = 40.dp,
+    userScrollEnabled: Boolean = true,
     content: @Composable ColumnScope.(page: Int) -> Unit
 ) {
 
@@ -541,8 +542,8 @@ fun HorizontalPager(
             )
         },
         modifier = modifier,
-        userScrollEnabled = false,
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.Top,
+        userScrollEnabled = userScrollEnabled
     )
 }
 
