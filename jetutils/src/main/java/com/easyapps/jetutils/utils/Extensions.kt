@@ -8,8 +8,11 @@ import androidx.activity.*
 import androidx.annotation.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.pager.*
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.lifecycle.*
 import androidx.navigation.*
+import kotlinx.coroutines.*
 
 fun Context.onToast(@StringRes text: Int?) {
     if (text != null)
@@ -155,3 +158,34 @@ fun AnimatedContentTransitionScope<NavBackStackEntry>.onEnterRight(): EnterTrans
         animationSpec = tween()
     )
 }
+
+fun Context.getVersionName(): String {
+    return try {
+        this.packageManager.getPackageInfo(this.packageName, 0).versionName
+    } catch (_: Exception) {
+        EMPTY
+    }
+}
+
+fun PagerState.page(): Int {
+    return this.currentPage
+}
+
+fun PagerState.page(index: Int = 0): Int {
+    return this.currentPage + index
+}
+
+suspend fun PagerState.scroll(plus: Int, delay: Long = 0) {
+    delay(delay)
+    val value = if (this.page(plus) > -1)
+        this.page(plus)
+    else
+        0
+    this.animateScrollToPage(value)
+}
+
+
+fun AndroidViewModel.onLaunch(block: suspend CoroutineScope.() -> Unit) {
+    this.viewModelScope.launch { withContext(Dispatchers.IO) { block.invoke(this) } }
+}
+

@@ -8,8 +8,10 @@ import androidx.compose.animation.graphics.res.*
 import androidx.compose.animation.graphics.vector.*
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.pager.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
+import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.focus.*
@@ -24,6 +26,7 @@ import com.easyapps.jetutils.*
 import com.easyapps.jetutils.R
 import com.easyapps.jetutils.utils.*
 import kotlinx.coroutines.*
+import kotlin.math.*
 
 @Composable
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationGraphicsApi::class)
@@ -354,7 +357,7 @@ fun RadioButton(
         LocalContentColor.current
 
     Card(
-        content =  {
+        content = {
             Row(
                 content = {
                     Icon(
@@ -446,9 +449,9 @@ fun AlertDialog(
                     val focusManager = LocalFocusManager.current
 
                     Surface(
-                        content =  {
+                        content = {
                             Column(
-                                content =  {
+                                content = {
                                     Text(
                                         text = stringResource(id = title ?: R.string.empty),
                                         fontSize = 20.sp,
@@ -504,5 +507,129 @@ fun DialogButton(
             contentColor = contentColor,
             containerColor = containerColor
         )
+    )
+}
+
+@Composable
+fun HorizontalPager(
+    state: PagerState,
+    modifier: Modifier,
+    maxOffset: Dp = 40.dp,
+    content: @Composable ColumnScope.(page: Int) -> Unit
+) {
+
+    val currentIndex = state.currentPage
+    val currentPageOffset = state.currentPageOffsetFraction
+
+    HorizontalPager(
+        state = state,
+        pageContent = { page ->
+            val offset = maxOffset * when (page) {
+                currentIndex -> currentPageOffset.absoluteValue
+                currentIndex - 1 -> 1 + currentPageOffset.coerceAtMost(0f)
+                currentIndex + 1 -> 1 - currentPageOffset.coerceAtLeast(0f)
+                else -> 1f
+            }
+
+            Column(
+                content = {
+                    content.invoke(this, page)
+                },
+                modifier = Modifier.offset(y = offset).padding(horizontal = 6.dp).onVerticalScroll(),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            )
+        },
+        modifier = modifier,
+        userScrollEnabled = false,
+        verticalAlignment = Alignment.Top
+    )
+}
+
+@Composable
+fun AnswersCard(
+    answer: String,
+    correct: String,
+    fontSize: TextUnit,
+    correctColor: Color,
+    answers: List<String>,
+    incorrectColor: Color,
+    backgroundColor: Color = MaterialTheme.colorScheme.background,
+    onCLick: (String) -> Unit
+) {
+    answers.forEach { which ->
+        val result = when {
+            answer.isEmpty() -> null
+            answer == which -> correct == which
+            answer != correct && which == correct -> true
+            else -> null
+        }
+
+        AnswerCard(
+            text = which,
+            state = result,
+            fontSize = fontSize,
+            enabled = answer.isEmpty(),
+            correctColor = correctColor,
+            incorrectColor = incorrectColor,
+            backgroundColor = backgroundColor,
+            onCLick = { onCLick.invoke(which) }
+        )
+    }
+}
+
+@Composable
+private fun AnswerCard(
+    text: String,
+    state: Boolean?,
+    enabled: Boolean,
+    fontSize: TextUnit,
+    correctColor: Color,
+    incorrectColor: Color,
+    backgroundColor: Color,
+    onCLick: () -> Unit
+) {
+    val backColor: Color
+    val textColor: Color
+    val backAlpha: Float
+    val strokeColor: Color
+
+    if (state != null) {
+        strokeColor = if (state)
+            correctColor
+        else
+            incorrectColor
+        textColor = strokeColor
+        backColor = strokeColor
+        backAlpha = 0.08f
+    } else {
+        backAlpha = 0.03f
+        backColor = backgroundColor
+        strokeColor = Color.LightGray
+        textColor = LocalContentColor.current
+    }
+
+    val back = onAnimateColor(
+        color = backColor,
+        alpha = backAlpha
+    ).compositeOver(background = backgroundColor)
+
+    OutlinedCard(
+        content = {
+            Text(
+                text = text,
+                fontSize = (fontSize.value - 3).sp,
+                color = onAnimateColor(color = textColor),
+                modifier = Modifier.fillMaxWidth().padding(all = 10.dp)
+            )
+        },
+        onClick = onCLick,
+        enabled = enabled,
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = back,
+            disabledContainerColor = back
+        ),
+        modifier = Modifier.padding(top = 2.dp, bottom = 2.dp),
+        border = BorderStroke(width = 1.dp, color = onAnimateColor(color = strokeColor))
     )
 }

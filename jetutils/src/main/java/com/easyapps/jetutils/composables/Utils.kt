@@ -66,6 +66,20 @@ fun onAnimateColor(color: Color, duration: Int = 300): Color {
 }
 
 @Composable
+fun onAnimateColor(
+    color: Color,
+    alpha: Float = 1f,
+    duration: Int = 300
+): Color {
+    val state by animateColorAsState(
+        label = EMPTY,
+        targetValue = color,
+        animationSpec = tween(duration)
+    )
+    return state.copy(alpha)
+}
+
+@Composable
 fun ScaleVisible(
     visible: Boolean,
     modifier: Modifier = Modifier,
