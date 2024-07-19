@@ -20,20 +20,34 @@ import com.easyapps.jetutils.R
 import com.easyapps.jetutils.utils.*
 
 
-fun BoxWithConstraintsScope.onScreenSizeChange(
-    windowSize: WindowSizeClass,
-    onScreenSizeChange: (Boolean, Boolean) -> Unit
+fun WindowSizeClass.onScreenSizeChange(
+    onScreenSizeChange: (compact: Boolean, medium: Boolean, expanded: Boolean) -> Unit
 ) {
     val compact =
-        windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact
+        this.widthSizeClass == WindowWidthSizeClass.Compact || this.heightSizeClass == WindowHeightSizeClass.Compact
 
-    val expanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
-    onScreenSizeChange.invoke(compact, expanded && maxHeight >= 900.dp || maxWidth >= 840.dp)
+    val expanded = this.widthSizeClass == WindowWidthSizeClass.Expanded || this.heightSizeClass == WindowHeightSizeClass.Expanded
+    val medium = this.widthSizeClass == WindowWidthSizeClass.Medium || this.heightSizeClass == WindowHeightSizeClass.Medium
+    onScreenSizeChange.invoke(compact, medium, expanded)
 }
 
 @Composable
 fun rememberDrawerState(initialValue: DrawerValue = DrawerValue.Closed): DrawerState {
     return rememberDrawerState(initialValue = initialValue)
+}
+
+@Composable
+@OptIn(ExperimentalMaterial3Api::class)
+fun rememberBottomSheetScaffoldState(
+    initialValue: SheetValue = SheetValue.PartiallyExpanded,
+    skipHiddenState: Boolean = false
+): BottomSheetScaffoldState {
+    val state =
+        rememberStandardBottomSheetState(
+            initialValue = initialValue,
+            skipHiddenState = skipHiddenState
+        )
+    return rememberBottomSheetScaffoldState(bottomSheetState = state)
 }
 
 @Composable
