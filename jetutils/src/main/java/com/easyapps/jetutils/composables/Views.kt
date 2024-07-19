@@ -223,7 +223,6 @@ fun ComponentActivity.ScaffoldNavigationDrawer(
     navigationRailHeader: @Composable (ColumnScope.() -> Unit)? = null
 ) {
 
-
     val windowSize = calculateWindowSizeClass(this)
 
     BoxWithConstraints(modifier = modifier) {
