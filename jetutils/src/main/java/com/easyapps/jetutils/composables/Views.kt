@@ -155,16 +155,18 @@ fun FloatingButton(
 fun Title(
     modifier: Modifier,
     @StringRes title: Int,
-    visible: Boolean = true
+    visible: Boolean = true,
+    fontSize: TextUnit = 18.sp,
+    fontWeight: FontWeight = FontWeight.Medium
 ) {
     ScaleVisible(visible = visible, modifier = modifier) {
         Text(
             maxLines = 1,
-            fontSize = 22.sp,
+            fontSize = fontSize,
+            fontWeight = fontWeight,
+            text = onString(id = title),
             textAlign = TextAlign.Center,
-            fontWeight = FontWeight.Normal,
             overflow = TextOverflow.Ellipsis,
-            text = stringResource(id = title),
             modifier = Modifier.fillMaxWidth()
         )
     }
