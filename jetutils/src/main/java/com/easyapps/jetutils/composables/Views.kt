@@ -1,5 +1,6 @@
 package com.easyapps.jetutils.composables
 
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.*
 import androidx.annotation.*
 import androidx.compose.animation.*
@@ -12,6 +13,7 @@ import androidx.compose.foundation.pager.*
 import androidx.compose.foundation.shape.*
 import androidx.compose.material3.*
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.*
 import androidx.compose.ui.focus.*
@@ -190,7 +192,7 @@ fun BackButton(
     modifier: Modifier = Modifier,
     visible: Boolean = true,
     @DrawableRes icon: Int = R.drawable.ic_back,
-    @StringRes contentDescription: Int = R.string.navigate_back,
+    @StringRes contentDescription: Int,
     onClick: () -> Unit
 ) {
     IconButton(
@@ -203,7 +205,8 @@ fun BackButton(
 }
 
 @Composable
-fun ScaffoldNavigationDrawer(
+@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
+fun ComponentActivity.ScaffoldNavigationDrawer(
     modifier: Modifier,
     isRailVisible: Boolean,
     headerSpace: Dp = 70.dp,
@@ -216,59 +219,139 @@ fun ScaffoldNavigationDrawer(
     drawerContent: @Composable ColumnScope.() -> Unit,
     navigationRailContent: @Composable ColumnScope.() -> Unit,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
+    onScreenSizeChange: (compact: Boolean, expanded: Boolean) -> Unit,
     navigationRailHeader: @Composable (ColumnScope.() -> Unit)? = null
 ) {
-    ModalNavigationDrawer(
-        content = {
-            Row(
-                content = {
-                    SlideOutVisible(
-                        content = {
-                            NavigationRail(
-                                content = {
-                                    Column(
-                                        content = navigationRailContent,
-                                        modifier = Modifier.onVerticalScroll(),
-                                        horizontalAlignment = Alignment.CenterHorizontally
-                                    )
-                                },
-                                header = navigationRailHeader,
-                                containerColor = backgroundColor,
-                                modifier = Modifier.fillMaxHeight()
-                            )
-                        },
-                        visible = isRailVisible
-                    )
 
-                    Scaffold(
-                        content = content,
-                        bottomBar = bottomBar,
-                        snackbarHost = snackbarHost,
-                        containerColor = backgroundColor,
-                        modifier = Modifier.weight(weight = 1f),
-                        floatingActionButton = floatingActionButton
-                    )
-                },
-                modifier = Modifier.animateContentSize().background(color = backgroundColor)
-            )
-        },
-        modifier = modifier,
-        drawerContent = {
-            ModalDrawerSheet(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .width(300.dp),
-                drawerContainerColor = MaterialTheme.colorScheme.background
-            ) {
-                Column(modifier = Modifier.onVerticalScroll()) {
-                    Spacer(modifier = Modifier.size(size = headerSpace))
-                    drawerContent(this)
+
+    val windowSize = calculateWindowSizeClass(this)
+
+    BoxWithConstraints(modifier = modifier) {
+
+        ModalNavigationDrawer(
+            content = {
+                Row(
+                    content = {
+                        SlideOutVisible(
+                            content = {
+                                NavigationRail(
+                                    content = {
+                                        Column(
+                                            content = navigationRailContent,
+                                            modifier = Modifier.onVerticalScroll(),
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        )
+                                    },
+                                    header = navigationRailHeader,
+                                    containerColor = backgroundColor,
+                                    modifier = Modifier.fillMaxHeight()
+                                )
+                            },
+                            visible = isRailVisible
+                        )
+
+                        Scaffold(
+                            content = content,
+                            bottomBar = bottomBar,
+                            snackbarHost = snackbarHost,
+                            containerColor = backgroundColor,
+                            modifier = Modifier.weight(weight = 1f),
+                            floatingActionButton = floatingActionButton
+                        )
+                    },
+                    modifier = Modifier.animateContentSize().background(color = backgroundColor)
+                )
+            },
+            drawerContent = {
+                ModalDrawerSheet(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .width(300.dp),
+                    drawerContainerColor = MaterialTheme.colorScheme.background
+                ) {
+                    Column(modifier = Modifier.onVerticalScroll()) {
+                        Spacer(modifier = Modifier.size(size = headerSpace))
+                        drawerContent(this)
+                    }
                 }
-            }
-        },
-        drawerState = drawerState,
-        gesturesEnabled = gesturesEnabled
-    )
+            },
+            drawerState = drawerState,
+            modifier = Modifier.fillMaxSize(),
+            gesturesEnabled = gesturesEnabled
+        )
+        onScreenSizeChange(windowSize, onScreenSizeChange)
+    }
+}
+
+@Composable
+fun NextButton(
+    visible: Boolean,
+    fontSize: TextUnit,
+    onClick: () -> Unit,
+    enabled: Boolean = true,
+    contentColor: Color = Color.White,
+    fontWeight: FontWeight = FontWeight.Normal,
+    disabledContainerColor: Color = Color.LightGray,
+    containerColor: Color = MaterialTheme.colorScheme.secondary,
+    @StringRes text: Int
+) {
+    ScaleVisible(visible = visible) {
+        TextButton(
+            enabled = enabled,
+            content = {
+                AnimatedContent(state = text) { value ->
+                    Text(
+                        text = onString(id = value),
+                        modifier = Modifier.padding(all = 2.dp),
+                        style = MaterialTheme.typography.bodyLarge.copy(
+                            fontWeight = fontWeight,
+                            fontSize = fontSize
+                        )
+                    )
+                }
+            },
+            onClick = onClick,
+            colors = ButtonDefaults.textButtonColors(
+                containerColor = containerColor,
+                contentColor = contentColor,
+                disabledContentColor = contentColor,
+                disabledContainerColor = disabledContainerColor
+            ),
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, top = 16.dp)
+        )
+    }
+}
+
+@Composable
+fun MarkButton(
+    enabled: Boolean,
+    borderColor: Color,
+    contentColor: Color,
+    onClick: () -> Unit,
+    @StringRes text: Int,
+    containerColor: Color,
+    fontSize: TextUnit = 16.sp
+) {
+    OutlinedCard(
+        onClick = onClick,
+        border = BorderStroke(width = 1.dp, color = onAnimateColor(color = borderColor)),
+        colors = CardDefaults.outlinedCardColors(
+            containerColor = onAnimateColor(color = containerColor),
+            contentColor = onAnimateColor(color = contentColor),
+            disabledContainerColor = MaterialTheme.colorScheme.background,
+            disabledContentColor = Color.Gray
+        ),
+        enabled = enabled,
+        modifier = Modifier.padding(end = 4.dp)
+    ) {
+        Text(
+            maxLines = 1,
+            fontSize = fontSize,
+            text = onString(id = text),
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier.padding(horizontal = 10.dp, vertical = 2.dp)
+        )
+    }
 }
 
 @Composable
@@ -536,7 +619,8 @@ fun HorizontalPager(
                 content = {
                     content.invoke(this, page)
                 },
-                modifier = Modifier.offset(y = offset).padding(horizontal = 6.dp).onVerticalScroll(),
+                modifier = Modifier.offset(y = offset).padding(horizontal = 6.dp)
+                    .onVerticalScroll(),
                 verticalArrangement = Arrangement.spacedBy(4.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             )

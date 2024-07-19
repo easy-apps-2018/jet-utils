@@ -1,35 +1,33 @@
 package com.easyapps.jetutils.composables
 
-import androidx.activity.*
 import androidx.annotation.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.*
 import androidx.compose.runtime.snapshots.*
 import androidx.compose.ui.*
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.platform.*
 import androidx.compose.ui.res.*
+import androidx.compose.ui.unit.*
 import androidx.navigation.*
 import androidx.navigation.compose.*
 import com.easyapps.jetutils.R
 import com.easyapps.jetutils.utils.*
 
-@Composable
-@OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
-fun ComponentActivity.CalculateWindowSizeClass(
-    onMedium: (Boolean) -> Unit = {},
-    onExpanded: (Boolean) -> Unit = {},
-    onCompact: (Boolean) -> Unit = {}
-) {
-    val windowSize = calculateWindowSizeClass(this)
-    onCompact(windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact)
-    onMedium(windowSize.widthSizeClass == WindowWidthSizeClass.Medium || windowSize.heightSizeClass == WindowHeightSizeClass.Medium)
-    onExpanded(windowSize.widthSizeClass == WindowWidthSizeClass.Expanded || windowSize.heightSizeClass == WindowHeightSizeClass.Expanded)
-}
 
+fun BoxWithConstraintsScope.onScreenSizeChange(
+    windowSize: WindowSizeClass,
+    onScreenSizeChange: (Boolean, Boolean) -> Unit
+) {
+    val compact =
+        windowSize.widthSizeClass == WindowWidthSizeClass.Compact || windowSize.heightSizeClass == WindowHeightSizeClass.Compact
+
+    val expanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
+    onScreenSizeChange.invoke(compact, expanded && maxHeight >= 900.dp || maxWidth >= 840.dp)
+}
 
 @Composable
 fun rememberNavController(onChanged: (value: String) -> Unit): NavHostController {
