@@ -217,6 +217,7 @@ fun ComponentActivity.ScaffoldNavigationDrawer(
     content: @Composable (PaddingValues) -> Unit,
     floatingActionButton: @Composable () -> Unit = {},
     drawerContent: @Composable ColumnScope.() -> Unit,
+    adBannerContent: @Composable ColumnScope.() -> Unit,
     navigationRailContent: @Composable ColumnScope.() -> Unit,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     onScreenSizeChange: (compact: Boolean, expanded: Boolean) -> Unit,
@@ -227,57 +228,61 @@ fun ComponentActivity.ScaffoldNavigationDrawer(
 
     BoxWithConstraints(modifier = modifier) {
 
-        ModalNavigationDrawer(
-            content = {
-                Row(
-                    content = {
-                        SlideOutVisible(
-                            content = {
-                                NavigationRail(
-                                    content = {
-                                        Column(
-                                            content = navigationRailContent,
-                                            modifier = Modifier.onVerticalScroll(),
-                                            horizontalAlignment = Alignment.CenterHorizontally
-                                        )
-                                    },
-                                    header = navigationRailHeader,
-                                    containerColor = backgroundColor,
-                                    modifier = Modifier.fillMaxHeight()
-                                )
-                            },
-                            visible = isRailVisible
-                        )
+        Column {
+            ModalNavigationDrawer(
+                content = {
+                    Row(
+                        content = {
+                            SlideOutVisible(
+                                content = {
+                                    NavigationRail(
+                                        content = {
+                                            Column(
+                                                content = navigationRailContent,
+                                                modifier = Modifier.onVerticalScroll(),
+                                                horizontalAlignment = Alignment.CenterHorizontally
+                                            )
+                                        },
+                                        header = navigationRailHeader,
+                                        containerColor = backgroundColor,
+                                        modifier = Modifier.fillMaxHeight()
+                                    )
+                                },
+                                visible = isRailVisible
+                            )
 
-                        Scaffold(
-                            content = content,
-                            bottomBar = bottomBar,
-                            snackbarHost = snackbarHost,
-                            containerColor = backgroundColor,
-                            modifier = Modifier.weight(weight = 1f),
-                            floatingActionButton = floatingActionButton
-                        )
-                    },
-                    modifier = Modifier.animateContentSize().background(color = backgroundColor)
-                )
-            },
-            drawerContent = {
-                ModalDrawerSheet(
-                    modifier = Modifier
-                        .fillMaxHeight()
-                        .width(300.dp),
-                    drawerContainerColor = MaterialTheme.colorScheme.background
-                ) {
-                    Column(modifier = Modifier.onVerticalScroll()) {
-                        Spacer(modifier = Modifier.size(size = headerSpace))
-                        drawerContent(this)
+                            Scaffold(
+                                content = content,
+                                bottomBar = bottomBar,
+                                snackbarHost = snackbarHost,
+                                containerColor = backgroundColor,
+                                modifier = Modifier.weight(weight = 1f),
+                                floatingActionButton = floatingActionButton
+                            )
+                        },
+                        modifier = Modifier.animateContentSize().background(color = backgroundColor)
+                    )
+                },
+                drawerContent = {
+                    ModalDrawerSheet(
+                        modifier = Modifier
+                            .fillMaxHeight()
+                            .width(300.dp),
+                        drawerContainerColor = MaterialTheme.colorScheme.background
+                    ) {
+                        Column(modifier = Modifier.onVerticalScroll()) {
+                            Spacer(modifier = Modifier.size(size = headerSpace))
+                            drawerContent(this)
+                        }
                     }
-                }
-            },
-            drawerState = drawerState,
-            modifier = Modifier.fillMaxSize(),
-            gesturesEnabled = gesturesEnabled
-        )
+                },
+                drawerState = drawerState,
+                gesturesEnabled = gesturesEnabled,
+                modifier = Modifier.weight(weight = 1f)
+            )
+            adBannerContent.invoke(this)
+        }
+
         onScreenSizeChange(windowSize, onScreenSizeChange)
     }
 }

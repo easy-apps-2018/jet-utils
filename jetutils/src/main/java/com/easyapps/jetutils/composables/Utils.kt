@@ -4,6 +4,8 @@ import androidx.annotation.*
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.windowsizeclass.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.*
@@ -27,6 +29,11 @@ fun BoxWithConstraintsScope.onScreenSizeChange(
 
     val expanded = windowSize.widthSizeClass == WindowWidthSizeClass.Expanded
     onScreenSizeChange.invoke(compact, expanded && maxHeight >= 900.dp || maxWidth >= 840.dp)
+}
+
+@Composable
+fun rememberDrawerState(initialValue: DrawerValue = DrawerValue.Closed): DrawerState {
+    return rememberDrawerState(initialValue = initialValue)
 }
 
 @Composable
